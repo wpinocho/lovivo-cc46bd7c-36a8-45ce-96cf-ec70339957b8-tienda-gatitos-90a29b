@@ -1,8 +1,5 @@
 import React from 'react';
-import { Heart, ShoppingCart, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Heart, ShoppingCart } from 'lucide-react';
 import { Kitten } from '../types/kitten';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
@@ -11,78 +8,77 @@ interface KittenCardProps {
   kitten: Kitten;
 }
 
-const KittenCard: React.FC<KittenCardProps> = ({ kitten }) => {
+const KittenCard = ({ kitten }: KittenCardProps) => {
   const { addToCart } = useCart();
 
+  console.log('KittenCard rendered for:', kitten.name);
+
   const handleAddToCart = () => {
+    console.log('Adding kitten to cart:', kitten.name);
     addToCart(kitten);
     toast.success(`${kitten.name} agregado al carrito! 🐱`);
   };
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-      <CardHeader className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg">
-          <img
-            src={kitten.image}
-            alt={kitten.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute top-2 right-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="rounded-full p-2 bg-white/80 hover:bg-white"
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
-          </div>
-          {kitten.vaccinated && (
-            <Badge className="absolute top-2 left-2 bg-green-500">
-              Vacunado
-            </Badge>
-          )}
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <div className="relative">
+        <img
+          src={kitten.image}
+          alt={kitten.name}
+          className="w-full h-48 object-cover"
+        />
+        <div className="absolute top-2 right-2">
+          <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
+            <Heart className="w-4 h-4 text-gray-600 hover:text-red-500" />
+          </button>
         </div>
-      </CardHeader>
+        {kitten.vaccinated && (
+          <div className="absolute top-2 left-2">
+            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+              Vacunado
+            </span>
+          </div>
+        )}
+      </div>
       
-      <CardContent className="p-4">
+      <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-800">{kitten.name}</h3>
-          <div className="flex items-center">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm text-gray-600 ml-1">4.8</span>
-          </div>
+          <span className="text-lg font-bold text-purple-600">
+            ${kitten.price.toLocaleString()}
+          </span>
         </div>
         
-        <p className="text-sm text-gray-600 mb-2">{kitten.breed}</p>
-        <p className="text-xs text-gray-500 mb-3 line-clamp-2">{kitten.description}</p>
-        
-        <div className="flex justify-between items-center mb-3">
-          <div className="text-xs text-gray-500">
-            <span className="block">Edad: {kitten.age} meses</span>
-            <span className="block">Color: {kitten.color}</span>
-          </div>
-          <Badge variant={kitten.gender === 'male' ? 'default' : 'secondary'}>
-            {kitten.gender === 'male' ? '♂ Macho' : '♀ Hembra'}
-          </Badge>
+        <div className="text-sm text-gray-600 mb-2">
+          <p><span className="font-medium">Raza:</span> {kitten.breed}</p>
+          <p><span className="font-medium">Edad:</span> {kitten.age}</p>
+          <p><span className="font-medium">Género:</span> {kitten.gender === 'male' ? 'Macho' : 'Hembra'}</p>
         </div>
         
-        <div className="text-2xl font-bold text-primary">
-          ${kitten.price.toLocaleString()}
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          {kitten.description}
+        </p>
+        
+        <div className="flex flex-wrap gap-1 mb-3">
+          {kitten.personality.map((trait, index) => (
+            <span
+              key={index}
+              className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full"
+            >
+              {trait}
+            </span>
+          ))}
         </div>
-      </CardContent>
-      
-      <CardFooter className="p-4 pt-0">
-        <Button 
+        
+        <button
           onClick={handleAddToCart}
-          className="w-full"
-          disabled={!kitten.available}
+          className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2"
         >
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          {kitten.available ? 'Agregar al Carrito' : 'No Disponible'}
-        </Button>
-      </CardFooter>
-    </Card>
+          <ShoppingCart className="w-4 h-4" />
+          <span>Agregar al Carrito</span>
+        </button>
+      </div>
+    </div>
   );
 };
 
